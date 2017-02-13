@@ -1,0 +1,211 @@
+#
+# Conocer las versiones de kubernetes instaladas
+#
+
+$ minikube get-k8s-versions
+
+      The following Kubernetes versions are available:
+      	- v1.5.1
+      	- v1.4.5
+      	- v1.4.3
+      	- v1.4.2
+      	- v1.4.1
+      	- v1.4.0
+      	- v1.3.7
+      	- v1.3.6
+      	- v1.3.5
+      	- v1.3.4
+      	- v1.3.3
+      	- v1.3.0
+
+
+
+#
+# Inicializar el cluster de kubernetes en mi maquina local con la
+# version "v1.5.1" de kubernetes
+#
+#   Otras opciones:  --cpus 2 --memory 8192 --disk-size 40g
+#
+
+$ minikube start --vm-driver=virtualbox --kubernetes-version="v1.5.1"
+
+    Starting local Kubernetes cluster...
+    Kubectl is now configured to use the cluster.
+
+$ minikube ip
+$ minikube status
+$ minikube dashboard
+
+
+#
+#
+#
+
+$ kubectl create -f kube/deployments/postgres-deployment.yaml
+
+$ kubectl describe deployment postgres
+
+    Name:			postgres
+    Namespace:		default
+    CreationTimestamp:	Sat, 07 Jan 2017 01:23:27 -0600
+    Labels:			app=webapp
+    Selector:		app=webapp,tier=postgres
+    Replicas:		1 updated | 1 total | 1 available | 0 unavailable
+    StrategyType:		Recreate
+    MinReadySeconds:	0
+    Conditions:
+      Type		Status	Reason
+      ----		------	------
+      Available 	True	MinimumReplicasAvailable
+    OldReplicaSets:	<none>
+    NewReplicaSet:	postgres-1747921911 (1/1 replicas created)
+    Events:
+      FirstSeen	LastSeen	Count	From				SubObjectPath	Type		Reason	Message
+      ---------	--------	-----	----				-------------	--------	------	-------
+      31m		31m		1	{deployment-controller }			Normal		ScalingReplicaSet	Scaled up replica set postgres-1747921911 to 1
+
+
+$ kubectl descrie Pod postgres
+
+    Name:		postgres-1747921911-g2sx5
+    Namespace:	default
+    Node:		minikube/192.168.99.100
+    Start Time:	Sat, 07 Jan 2017 01:23:27 -0600
+    Labels:		app=webapp
+    		pod-template-hash=1747921911
+    		tier=postgres
+    Status:		Running
+    IP:		172.17.0.4
+    Controllers:	ReplicaSet/postgres-1747921911
+    Containers:
+      postgres:
+        Container ID:	docker://605e99318e207a4dff3f6a46572c1d26892804e349c1494d191934a1e27a0d3d
+        Image:		postgres:9.5.3
+        Image ID:		docker://sha256:7ee9d206197038794288f7c8d8c5ee1fc51ca09f05d0cfb004f85da709520b8a
+        Port:		5432/TCP
+        State:		Running
+          Started:		Sat, 07 Jan 2017 01:25:32 -0600
+        Ready:		True
+        Restart Count:	0
+        Volume Mounts:
+          /var/run/secrets/kubernetes.io/serviceaccount from default-token-t2lnf (ro)
+        Environment Variables:
+          POSTGRES_PASSWORD:	mysecretpassword
+          POSTGRES_USER:		webapp
+          POSTGRES_DB:		webapp_development
+    Conditions:
+      Type		Status
+      Initialized 	True
+      Ready 	True=
+      PodScheduled 	True
+    Volumes:
+      default-token-t2lnf:
+        Type:	Secret (a volume populated by a Secret)
+        SecretName:	default-token-t2lnf
+    QoS Class:	BestEffort
+    Tolerations:	<none>
+    Events:
+      FirstSeen	LastSeen	Count	From			SubObjectPath			Type		Reason		Message
+      ---------	--------	-----	----			-------------			--------	------		-------
+      38m		38m		1	{default-scheduler }					Normal		Scheduled	Successfully assigned postgres-1747921911-g2sx5 to minikube
+      38m		38m		1	{kubelet minikube}	spec.containers{postgres}	Normal		Pulling		pulling image "postgres:9.5.3"
+      36m		36m		1	{kubelet minikube}	spec.containers{postgres}	Normal		Pulled		Successfully pulled image "postgres:9.5.3"
+      36m		36m		1	{kubelet minikube}	spec.containers{postgres}	Normal		Created		Created container with docker id 605e99318e20; Security:[seccomp=unconfined]
+      36m		36m		1	{kubelet minikube}	spec.containers{postgres}	Normal		Started		Started container with docker id 605e99318e20
+
+
+---------------------------------------------------------------------------------------
+
+    $ docker login
+
+          Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+          Username (jsndh):
+          Password:
+          Login Succeeded
+
+    $ kubectl create -f jobs/setup-job.yaml
+
+          job "setup" created
+
+    $ Pods=$(kubectl get Pods --selector=job-name=setup --output=jsonpath={.items..metadata.name})
+
+    $ echo $Pods
+
+          setup-zrlgs
+
+    $ kubectl logs $Pods
+    $ kubectl logs setup-zrlgs
+
+          2017-01-07T08:52:07.428582291Z Waiting PostgreSQL to start on 5432...
+          2017-01-07T08:52:07.431808305Z PostgreSQL started
+          2017-01-07T08:52:09.817702981Z D, [2017-01-07T08:52:09.817344 #7] DEBUG -- :    (0.6ms)  SELECT pg_try_advisory_lock(1932410105524239390);
+          2017-01-07T08:52:09.830237840Z D, [2017-01-07T08:52:09.829913 #7] DEBUG -- :   ActiveRecord::SchemaMigration Load (0.7ms)  SELECT "schema_migrations".* FROM "schema_migrations"
+          2017-01-07T08:52:09.847722383Z D, [2017-01-07T08:52:09.847417 #7] DEBUG -- :   ActiveRecord::InternalMetadata Load (0.7ms)  SELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2  [["key", :environment], ["LIMIT", 1]]
+          2017-01-07T08:52:09.854333732Z D, [2017-01-07T08:52:09.854135 #7] DEBUG -- :    (0.3ms)  BEGIN
+          2017-01-07T08:52:09.855889996Z D, [2017-01-07T08:52:09.855765 #7] DEBUG -- :    (0.3ms)  COMMIT
+          2017-01-07T08:52:09.856551649Z D, [2017-01-07T08:52:09.856401 #7] DEBUG -- :    (0.4ms)  SELECT pg_advisory_unlock(1932410105524239390)
+          2017-01-07T08:52:09.862498077Z D, [2017-01-07T08:52:09.862239 #7] DEBUG -- :   ActiveRecord::SchemaMigration Load (0.4ms)  SELECT "schema_migrations".* FROM "schema_migrations"
+
+    $ kubectl get Pods
+
+          NAME                        READY     STATUS    RESTARTS   AGE
+          postgres-1747921911-g2sx5   1/1       Running   0          1h
+
+--------------------------------------------------------------------
+
+  irb -ryaml
+  >> YAML.load_file 'x.yml'
+
+---------------------------------------------------------------------
+
+
+$ kubectl get Pods
+
+    NAME                        READY     STATUS    RESTARTS   AGE
+    postgres-1747921911-g2sx5   1/1       Running   1          22h
+    webapp-165144357-39b93      1/1       Running   1          19h
+    webapp-165144357-709zh      1/1       Running   1          19h
+    webapp-165144357-kdnc0      1/1       Running   1          19h
+
+
+--------------------------------------------------------------------
+
+$ kubectl create -f deployments/webapp-deployment.yaml
+
+    service "webapp" created
+    deployment "webapp" created
+
+--------------------------------------------------------------------
+
+
+$ kubectl get pods
+
+    NAME                        READY     STATUS    RESTARTS   AGE
+    postgres-1747921911-f6d2r   1/1       Running   0          49m
+    webapp-165144357-5vnbm      1/1       Running   0          9m
+    webapp-165144357-k17rd      1/1       Running   0          9m
+    webapp-165144357-p23f9      1/1       Running   0          9m
+
+
+------------------------------------------------------------------------------
+
+
+$ kubectl logs webapp-165144357-5vnbm
+
+    *** Running /etc/my_init.d/00_regen_ssh_host_keys.sh...
+    *** Running /etc/my_init.d/30_presetup_nginx.sh...
+    *** Running /etc/rc.local...
+    *** Booting runit daemon...
+    *** Runit started as PID 9
+    Jan  8 07:32:05 webapp-165144357-5vnbm syslog-ng[18]: syslog-ng starting up; version='3.5.6'
+    ok: run: /etc/service/nginx-log-forwarder: (pid 28) 0s
+    [ 2017-01-08 07:32:06.5773 29/7fb1128eb780 age/Wat/WatchdogMain.cpp:1291 ]: Starting Passenger watchdog...
+    [ 2017-01-08 07:32:06.6171 32/7f23f4f45780 age/Cor/CoreMain.cpp:982 ]: Starting Passenger core...
+    [ 2017-01-08 07:32:06.6172 32/7f23f4f45780 age/Cor/CoreMain.cpp:235 ]: Passenger core running in multi-application mode.
+    [ 2017-01-08 07:32:06.6192 32/7f23f4f45780 age/Cor/CoreMain.cpp:732 ]: Passenger core online, PID 32
+    [ 2017-01-08 07:32:06.6532 37/7fc314f6e780 age/Ust/UstRouterMain.cpp:529 ]: Starting Passenger UstRouter...
+    [ 2017-01-08 07:32:06.6540 37/7fc314f6e780 age/Ust/UstRouterMain.cpp:342 ]: Passenger UstRouter online, PID 37
+
+--------------------------------------------------------------------------
+
+$ minikube service webapp

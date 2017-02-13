@@ -1,0 +1,206 @@
+
+$ kubectl config current-context
+
+    minikube
+
+--------------------------------------
+
+$ atom ~/.config/fish/config.fish
+
+      set -g -x NUM_NODES 2
+      set -g -x NODE_SIZE 't2.small'
+
+--
+
+KUBE_AWS_ZONE
+NUM_NODES
+MASTER_SIZE
+NODE_SIZE
+AWS_S3_REGION
+AWS_S3_BUCKET
+INSTANCE_PREFIX
+
+----------------------------------------------------------
+
+
+$  export KUBERNETES_PROVIDER=aws; curl -sS https://get.k8s.io | bash
+
+
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+    100   161  100   161    0     0    178      0 --:--:-- --:--:-- --:--:--   178
+    100     7  100     7    0     0      4      0  0:00:01  0:00:01 --:--:--     0
+    Downloading kubernetes release v1.5.1
+    from https://dl.k8s.io/v1.5.1/kubernetes.tar.gz
+    to /home/jose/Cursos/Docker/RailsDockerKubenetes/kube/kubernetes.tar.gz
+    Is this ok? [Y]/n
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+    100   161  100   161    0     0    180      0 --:--:-- --:--:-- --:--:--   180
+    100 4682k  100 4682k    0     0   676k      0  0:00:06  0:00:06 --:--:--  984k
+    Unpacking kubernetes release v1.5.1
+    Kubernetes release: v1.5.1
+    Server: linux/amd64
+    Client: linux/amd64
+
+    Will download kubernetes-server-linux-amd64.tar.gz from https://storage.googleapis.com/kubernetes-release/release/v1.5.1
+    Will download and extract kubernetes-client-linux-amd64.tar.gz from https://storage.googleapis.com/kubernetes-release/release/v1.5.1
+    Is this ok? [Y]/n
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+    100  298M  100  298M    0     0   949k      0  0:05:22  0:05:22 --:--:--  969k
+
+    md5sum(kubernetes-server-linux-amd64.tar.gz)=1c9e6b14ef70b41176ded95fdfbf7294
+    sha1sum(kubernetes-server-linux-amd64.tar.gz)=9b112cd30db450127eb5ca2f5fa02e5631e57e31
+
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+    100 22.2M  100 22.2M    0     0   931k      0  0:00:24  0:00:24 --:--:--  969k
+
+    md5sum(kubernetes-client-linux-amd64.tar.gz)=d938b75c235ffd7e448c3096a802eec3
+    sha1sum(kubernetes-client-linux-amd64.tar.gz)=7aa2e319a2ff38218db55ae2a79ba335420f0553
+
+    Extracting /home/jose/Cursos/Docker/RailsDockerKubenetes/kube/kubernetes/client/kubernetes-client-linux-amd64.tar.gz into /home/jose/Cursos/Docker/RailsDockerKubenetes/kube/kubernetes/platforms/linux/amd64
+    Add '/home/jose/Cursos/Docker/RailsDockerKubenetes/kube/kubernetes/client/bin' to your PATH to use newly-installed binaries.
+
+
+---------------------------------------------------------------------------------------------------
+
+$ export KUBERNETES_PROVIDER=aws; curl -sS https://get.k8s.io | bash
+      'kubernetes' directory already exist. Should we skip download step and start to create cluster based on it? [Y]/n
+      Skipping download step.
+      Creating a kubernetes on aws...
+      ... Starting cluster in us-west-2a using provider aws
+      ... calling verify-prereqs
+      ... calling kube-up
+      Starting cluster using os distro: jessie
+      Uploading to Amazon S3
+      +++ Staging server tars to S3 Storage: kubernetes-staging-4055e914231e2d714a57192ddfb05482/devel
+      upload: ../../../../../../../tmp/kubernetes.snTtew/s3/bootstrap-script to s3://kubernetes-staging-4055e914231e2d714a57192ddfb05482/devel/bootstrap-script
+      upload: ../../../../../../../tmp/kubernetes.snTtew/s3/kubernetes-server-linux-amd64.tar.gz to s3://kubernetes-staging-4055e914231e2d714a57192ddfb05482/devel/kubernetes-server-linux-amd64.tar.gz
+      Uploaded server tars:
+        SERVER_BINARY_TAR_URL: https://s3.amazonaws.com/kubernetes-staging-4055e914231e2d714a57192ddfb05482/devel/kubernetes-server-linux-amd64.tar.gz
+        SALT_TAR_URL: https://s3.amazonaws.com/kubernetes-staging-4055e914231e2d714a57192ddfb05482/devel/kubernetes-salt.tar.gz
+        BOOTSTRAP_SCRIPT_URL: https://s3.amazonaws.com/kubernetes-staging-4055e914231e2d714a57192ddfb05482/devel/bootstrap-script
+      Creating master IAM profile: kubernetes-master-kubernetes-kubernetes-vpc
+      Creating IAM role: kubernetes-master-kubernetes-kubernetes-vpc
+      Creating IAM role-policy: kubernetes-master-kubernetes-kubernetes-vpc
+      Creating IAM instance-policy: kubernetes-master-kubernetes-kubernetes-vpc
+      Adding IAM role to instance-policy: kubernetes-master-kubernetes-kubernetes-vpc
+      Creating minion IAM profile: kubernetes-minion-kubernetes-kubernetes-vpc
+      Creating IAM role: kubernetes-minion-kubernetes-kubernetes-vpc
+      Creating IAM role-policy: kubernetes-minion-kubernetes-kubernetes-vpc
+      Creating IAM instance-policy: kubernetes-minion-kubernetes-kubernetes-vpc
+      Adding IAM role to instance-policy: kubernetes-minion-kubernetes-kubernetes-vpc
+      Generating public/private rsa key pair.
+      Your identification has been saved in /home/jose/.ssh/kube_aws_rsa.
+      Your public key has been saved in /home/jose/.ssh/kube_aws_rsa.pub.
+      The key fingerprint is:
+      SHA256:8GODvW8OQ46UAfFvY23jibm1Wth05yJEwOJPXTj5FaA jose@HPZBook
+      The key's randomart image is:
+      +---[RSA 2048]----+
+      |    o. ..  o.... |
+      |     o. ..+.. .  |
+      |     .+. .E+ .   |
+      |      .O.o. .    |
+      |      +oS * . .  |
+      |     . B.# + o   |
+      |      . O B . .  |
+      |         B.o .   |
+      |        o++      |
+      +----[SHA256]-----+
+      Using SSH key with (AWS) fingerprint: SHA256:8GODvW8OQ46UAfFvY23jibm1Wth05yJEwOJPXTj5FaA
+      Creating vpc.
+      Adding tag to vpc-b2ec50d5: Name=kubernetes-vpc
+      Adding tag to vpc-b2ec50d5: KubernetesCluster=kubernetes
+      Using VPC vpc-b2ec50d5
+      Adding tag to dopt-7fe8e51b: Name=kubernetes-dhcp-option-set
+      Adding tag to dopt-7fe8e51b: KubernetesCluster=kubernetes
+      Using DHCP option set dopt-7fe8e51b
+      Creating subnet.
+      Adding tag to subnet-a52bdeec: KubernetesCluster=kubernetes
+      Using subnet subnet-a52bdeec
+      Creating Internet Gateway.
+      Using Internet Gateway igw-234d0f47
+      Associating route table.
+      Creating route table
+      Adding tag to rtb-d17e35b6: KubernetesCluster=kubernetes
+      Associating route table rtb-d17e35b6 to subnet subnet-a52bdeec
+      Adding route to route table rtb-d17e35b6
+      Using Route Table rtb-d17e35b6
+      Creating master security group.
+      Creating security group kubernetes-master-kubernetes.
+      Adding tag to sg-be4c94c6: KubernetesCluster=kubernetes
+      Creating minion security group.
+      Creating security group kubernetes-minion-kubernetes.
+      Adding tag to sg-ae4c94d6: KubernetesCluster=kubernetes
+      Using master security group: kubernetes-master-kubernetes sg-be4c94c6
+      Using minion security group: kubernetes-minion-kubernetes sg-ae4c94d6
+      Creating master disk: size 20GB, type gp2
+      Adding tag to vol-0bac4a602a0c06426: Name=kubernetes-master-pd
+      Adding tag to vol-0bac4a602a0c06426: KubernetesCluster=kubernetes
+      Allocated Elastic IP for master: 35.167.116.187
+      Adding tag to vol-0bac4a602a0c06426: kubernetes.io/master-ip=35.167.116.187
+      Generating certs for alternate-names: IP:35.167.116.187,IP:172.20.0.9,IP:10.0.0.1,DNS:kubernetes,DNS:kubernetes.default,DNS:kubernetes.default.svc,DNS:kubernetes.default.svc.cluster.local,DNS:kubernetes-master
+      Starting Master
+
+      An error occurred (PendingVerification) when calling the RunInstances operation: Your account is currently being verified. Verification normally takes less than 2 hours. Until your account is verified, you may not be able to launch additional instances or create additional volumes. If you are still receiving this message after more than 2 hours, please let us know by writing to aws-verification@amazon.com. We appreciate your patience.
+
+
+--------------------------------------------------------------------------------
+
+        ...
+
+        Generating certs for alternate-names: IP:35.167.116.187,IP:172.20.0.9,IP:10.0.0.1,DNS:kubernetes,DNS:kubernetes.default,DNS:kubernetes.default.svc,DNS:kubernetes.default.svc.cluster.local,DNS:kubernetes-master
+        Starting Master
+
+        An error occurred (InvalidIPAddress.InUse) when calling the RunInstances operation: Address 172.20.0.9 is in use.
+
+
+$ ./kubernetes/cluster/kube-down.sh
+
+
+        Bringing down cluster using provider: aws
+        Deleting instances in VPC: vpc-b2ec50d5
+        Waiting for instances to be deleted
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        Waiting for instance i-084a90a09c91a9d21 to be terminated (currently shutting-down)
+        Sleeping for 3 seconds...
+        All instances deleted
+        Releasing Elastic IP: 35.167.116.187
+        Deleting volume vol-0bac4a602a0c06426
+        Cleaning up resources in VPC: vpc-b2ec50d5
+        Cleaning up security group: sg-ae4c94d6
+        Cleaning up security group: sg-be4c94c6
+        Deleting security group: sg-ae4c94d6
+        Deleting security group: sg-be4c94c6
+        Deleting VPC: vpc-b2ec50d5
+        Deleting IAM Instance profiles
+        Removing role from instance profile: kubernetes-master-kubernetes-kubernetes-vpc
+        Deleting IAM Instance-Profile: kubernetes-master-kubernetes-kubernetes-vpc
+        Delete IAM role policy: kubernetes-master-kubernetes-kubernetes-vpc
+        Deleting IAM Role: kubernetes-master-kubernetes-kubernetes-vpc
+        Removing role from instance profile: kubernetes-minion-kubernetes-kubernetes-vpc
+        Deleting IAM Instance-Profile: kubernetes-minion-kubernetes-kubernetes-vpc
+        Delete IAM role policy: kubernetes-minion-kubernetes-kubernetes-vpc
+        Deleting IAM Role: kubernetes-minion-kubernetes-kubernetes-vpc
+        Done
